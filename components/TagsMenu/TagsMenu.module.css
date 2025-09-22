@@ -12,12 +12,15 @@
     padding: 0;
 }
 
-/* Убираем правило :hover и просто стилизуем сам список */
 .menuList {
-    display: block; /* Теперь он всегда display: block, а его рендер контролирует React */
+    display: block;
     position: absolute;
     top: 100%;
-    left: 0;
+
+    /* ✨ КЛЮЧЕВОЕ ИЗМЕНЕНИЕ: */
+    right: 0; /* Привязываем к правому краю родителя */
+    left: auto; /* Сбрасываем привязку к левому краю */
+
     background-color: #333;
     list-style: none;
     padding: 0.5rem 0;
@@ -29,14 +32,15 @@
 }
 
 .menuItem {
-    padding: 0; /* Убираем внутренний отступ, чтобы ссылка занимала все пространство */
+    padding: 0;
 }
 
 .menuLink {
     color: white;
     text-decoration: none;
     display: block;
-    padding: 0.5rem 1rem; /* Добавляем отступы сюда */
+    padding: 0.5rem 1rem;
+    white-space: nowrap; /* Гарантируем, что текст не будет переноситься */
 }
 
 .menuLink:hover {
