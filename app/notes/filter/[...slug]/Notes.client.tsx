@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { fetchNotes } from "@/lib/api";
 import NoteList from "@/components/NoteList/NoteList";
 import SearchBox from "@/components/SearchBox/SearchBox";
@@ -11,9 +11,9 @@ import Pagination from "@/components/Pagination/Pagination";
 import Modal from "@/components/Modal/Modal";
 import NoteForm from "@/components/NoteForm/NoteForm";
 import css from "./NotesPage.module.css";
-import { Toaster } from "react-hot-toast";
 
-const NotesClient = () => {
+// Принимаем тег как пропс
+const NotesClient = ({ tag }: { tag: string }) => {
     const [page, setPage] = useState<number>(1);
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -21,11 +21,11 @@ const NotesClient = () => {
 
     useEffect(() => {
         setPage(1);
-    }, [debouncedQuery]);
+    }, [debouncedQuery, tag]); // Сбрасываем страницу при смене тега
 
     const { data: notesData } = useQuery({
-        queryKey: ["notes", page, debouncedQuery],
-        queryFn: () => fetchNotes({ page, query: debouncedQuery }),
+        queryKey: ["notes", page, debouncedQuery, tag], // Добавляем тег в ключ запроса
+        queryFn: () => fetchNotes({ page, query: debouncedQuery, tag }), // и в саму функцию
         placeholderData: keepPreviousData,
     });
 

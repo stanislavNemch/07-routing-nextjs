@@ -26,6 +26,7 @@ export interface FetchNotesResponse {
 interface FetchNotesParams {
     page?: number;
     query?: string;
+    tag?: string;
 }
 
 export interface NewNotePayload {
@@ -37,12 +38,14 @@ export interface NewNotePayload {
 export const fetchNotes = async ({
     page = 1,
     query = "",
+    tag = "",
 }: FetchNotesParams): Promise<FetchNotesResponse> => {
     const response = await apiClient.get<FetchNotesResponse>("/notes", {
         params: {
             page,
             perPage: 12,
             ...(query ? { search: query } : {}),
+            ...(tag ? { tag } : {}),
         },
     });
     return response.data;
