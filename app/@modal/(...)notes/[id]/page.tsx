@@ -9,7 +9,7 @@ interface NoteModalProps {
 }
 
 export default async function NoteModal({ params }: NoteModalProps) {
-    // Явно ожидаем (await) на Promise
+    // Явно ожидаем (await) на Promise, чтобы получить id
     const { id } = await params;
     const note = await fetchNoteById(id);
 

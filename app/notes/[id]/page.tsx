@@ -6,6 +6,7 @@ import {
 import { fetchNoteById } from "@/lib/api";
 import NoteDetailsClient from "./NoteDetails.client";
 
+// Типизируем `params` как Promise
 interface NoteDetailsPageProps {
     params: Promise<{ id: string }>;
 }
@@ -15,6 +16,7 @@ export default async function NoteDetailsPage({
 }: NoteDetailsPageProps) {
     const queryClient = new QueryClient();
 
+    // Явно ожидаем (await) на Promise
     const resolvedParams = await params;
     const { id } = resolvedParams;
 
