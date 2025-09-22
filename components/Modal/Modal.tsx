@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-// Импортируем useCallback
 import { useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import css from "./Modal.module.css";
@@ -19,14 +18,13 @@ const Modal = ({
 }: ModalProps) => {
     const router = useRouter();
 
-    // ✨ Оборачиваем handleClose в useCallback
     const handleClose = useCallback(() => {
         if (onCloseProp) {
-            onCloseProp(); // Если передан onClose, используем его
+            onCloseProp();
         } else {
-            router.back(); // Иначе используем router.back()
+            router.back();
         }
-    }, [onCloseProp, router]); // Зависимости: функция изменится, только если изменятся эти пропсы/объекты
+    }, [onCloseProp, router]);
 
     const isOpen = isOpenProp ?? true;
     const dialogRef = useRef<HTMLDivElement>(null);
@@ -39,7 +37,47 @@ const Modal = ({
         };
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [handleClose]); // Теперь `handleClose` стабилен, и эффект не будет перезапускаться без причины
+    }, [handleClose]);
+
+    // Блокируем скролл и “отключаем” фон при открытой модалке
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const body = document.body;
+        const html = document.documentElement;
+
+        // Сохраняем предыдущие inline-стили, чтобы корректно восстановить
+        const prevOverflow = body.style.overflow;
+        const prevPaddingRight = body.style.paddingRight;
+
+        // Компенсируем исчезающий скроллбар, чтобы не было “скачка” контента
+        const scrollbarWidth = window.innerWidth - html.clientWidth;
+        body.style.overflow = "hidden";
+        if (scrollbarWidth > 0) {
+            const currentPadding =
+                parseFloat(getComputedStyle(body).paddingRight) || 0;
+            body.style.paddingRight = `${currentPadding + scrollbarWidth}px`;
+        }
+
+        // Делаем фон недоступным для взаимодействия и чтения скринридером
+        const blockedNodes = Array.from(
+            document.querySelectorAll<HTMLElement>("header, main, footer")
+        );
+        blockedNodes.forEach((el) => {
+            el.setAttribute("aria-hidden", "true");
+            // inert блокирует фокус и события
+            el.setAttribute("inert", "");
+        });
+
+        return () => {
+            body.style.overflow = prevOverflow;
+            body.style.paddingRight = prevPaddingRight;
+            blockedNodes.forEach((el) => {
+                el.removeAttribute("aria-hidden");
+                el.removeAttribute("inert");
+            });
+        };
+    }, [isOpen]);
 
     const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
         if (
@@ -56,7 +94,12 @@ const Modal = ({
 
     return createPortal(
         <div className={css.backdrop} onClick={handleBackdropClick}>
-            <div ref={dialogRef} className={css.modal}>
+            <div
+                ref={dialogRef}
+                className={css.modal}
+                role="dialog"
+                aria-modal="true"
+            >
                 {children}
             </div>
         </div>,
