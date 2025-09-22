@@ -1,3 +1,4 @@
+import css from "./[...slug]/NotesPage.module.css";
 export default function FilterLayout({
     children,
     sidebar,
@@ -6,7 +7,7 @@ export default function FilterLayout({
     sidebar: React.ReactNode;
 }) {
     return (
-        <div style={{ display: "flex", gap: "20px", padding: "16px" }}>
+        <div className={css.app} style={{ display: "flex", gap: "2rem" }}>
             {sidebar}
             <div style={{ flex: 1 }}>{children}</div>
         </div>

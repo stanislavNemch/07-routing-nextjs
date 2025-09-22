@@ -8,8 +8,8 @@ const NotePreview = ({ note }: { note: Note }) => {
     const router = useRouter();
 
     return (
-        <div className={css.container}>
-            <button onClick={() => router.back()} className={css.backBtn}>
+        <div className={css.previewContainer}>
+            <button onClick={() => router.back()} className={css.closeButton}>
                 &times;
             </button>
             <div className={css.item}>

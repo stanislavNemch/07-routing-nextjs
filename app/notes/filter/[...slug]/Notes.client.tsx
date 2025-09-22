@@ -12,7 +12,6 @@ import Modal from "@/components/Modal/Modal";
 import NoteForm from "@/components/NoteForm/NoteForm";
 import css from "./NotesPage.module.css";
 
-// Принимаем тег как пропс
 const NotesClient = ({ tag }: { tag: string }) => {
     const [page, setPage] = useState<number>(1);
     const [searchQuery, setSearchQuery] = useState<string>("");
@@ -21,11 +20,11 @@ const NotesClient = ({ tag }: { tag: string }) => {
 
     useEffect(() => {
         setPage(1);
-    }, [debouncedQuery, tag]); // Сбрасываем страницу при смене тега
+    }, [debouncedQuery, tag]);
 
-    const { data: notesData } = useQuery({
-        queryKey: ["notes", page, debouncedQuery, tag], // Добавляем тег в ключ запроса
-        queryFn: () => fetchNotes({ page, query: debouncedQuery, tag }), // и в саму функцию
+    const { data: notesData, isLoading } = useQuery({
+        queryKey: ["notes", page, debouncedQuery, tag],
+        queryFn: () => fetchNotes({ page, query: debouncedQuery, tag }),
         placeholderData: keepPreviousData,
     });
 
@@ -40,7 +39,7 @@ const NotesClient = ({ tag }: { tag: string }) => {
     const handleDeleted = () => toast.success("Note deleted successfully!");
 
     return (
-        <div className={css.app}>
+        <div>
             <Toaster position="top-right" />
             <header className={css.toolbar}>
                 <SearchBox value={searchQuery} onChange={setSearchQuery} />
@@ -56,7 +55,8 @@ const NotesClient = ({ tag }: { tag: string }) => {
                 </button>
             </header>
             <main>
-                {notesData && notesData.notes.length > 0 && (
+                {isLoading && <p>Loading notes...</p>}
+                {notesData && (
                     <NoteList
                         notes={notesData.notes}
                         onDeleted={handleDeleted}

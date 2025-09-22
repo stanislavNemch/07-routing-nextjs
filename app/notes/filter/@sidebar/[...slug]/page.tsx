@@ -1,31 +1,32 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation"; // Хук для определения активного маршрута
 import css from "./Sidebar.module.css";
 
-interface SidebarNotesProps {
-    params: {
-        slug: string[];
-    };
-}
-
-export default function SidebarNotes({ params }: SidebarNotesProps) {
+export default function SidebarNotes() {
     const tags = ["All", "Todo", "Work", "Personal", "Meeting", "Shopping"];
-    const activeTag = params.slug?.[0] || "All";
+    const pathname = usePathname(); // Получаем текущий URL
 
     return (
         <aside className={css.sidebar}>
             <h2 className={css.title}>Filter by Tag</h2>
             <ul className={css.menuList}>
-                {tags.map((tag) => (
-                    <li key={tag} className={css.menuItem}>
-                        <Link
-                            href={`/notes/filter/${tag}`}
-                            // Добавляем класс для активной ссылки
-                            className={`${css.menuLink} ${activeTag === tag ? css.active : ""}`}
-                        >
-                            {tag === "All" ? "All notes" : tag}
-                        </Link>
-                    </li>
-                ))}
+                {tags.map((tag) => {
+                    const href = `/notes/filter/${tag}`;
+                    const isActive = pathname === href; // Проверяем, активна ли ссылка
+
+                    return (
+                        <li key={tag} className={css.menuItem}>
+                            <Link
+                                href={href}
+                                className={`${css.menuLink} ${isActive ? css.active : ""}`}
+                            >
+                                {tag === "All" ? "All notes" : tag}
+                            </Link>
+                        </li>
+                    );
+                })}
             </ul>
         </aside>
     );
