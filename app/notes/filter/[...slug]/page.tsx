@@ -6,22 +6,24 @@ import {
 import { fetchNotes } from "@/lib/api";
 import NotesClient from "./Notes.client";
 
+// Типизируем `params` как Promise
 interface NotesPageProps {
-    params: {
-        slug?: string[]; // slug может отсутствовать
-    };
+    params: Promise<{ slug?: string[] }>;
 }
 
 export default async function NotesFilterPage({ params }: NotesPageProps) {
     const queryClient = new QueryClient();
 
-    // Извлекаем тег. Если slug отсутствует или равен 'All', тег пустой.
+    // Явно ожидаем (await) на Promise
+    const resolvedParams = await params;
     const tag =
-        params.slug?.[0] && params.slug[0] !== "All" ? params.slug[0] : "";
+        resolvedParams.slug?.[0] && resolvedParams.slug[0] !== "All"
+            ? resolvedParams.slug[0]
+            : "";
 
     await queryClient.prefetchQuery({
-        queryKey: ["notes", 1, "", tag], // Добавляем тег в ключ
-        queryFn: () => fetchNotes({ page: 1, query: "", tag }), // и в запрос
+        queryKey: ["notes", 1, "", tag],
+        queryFn: () => fetchNotes({ page: 1, query: "", tag }),
     });
 
     return (
