@@ -1,5 +1,5 @@
 import Modal from "@/components/Modal/Modal";
-import NotePreview from "@/components/NotePreview/NotePreview";
+import NotePreview from "@/app/@modal/(.)notes/[id]/NotePreview";
 import { fetchNoteById } from "@/lib/api";
 import { Suspense } from "react";
 
