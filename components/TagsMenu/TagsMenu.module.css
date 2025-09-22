@@ -1,53 +1,45 @@
 .menuContainer {
-  position: relative;
-  display: inline-block;
+    position: relative;
+    display: inline-block;
 }
 
 .menuButton {
-  background-color: #f5f5f5;
-  color: #333;
-  border: 1px solid #ccc;
-  padding: 8px 16px;
-  font-size: 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 0.2s ease;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0;
 }
 
-.menuButton:hover {
-  background-color: #eaeaea;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
+/* Убираем правило :hover и просто стилизуем сам список */
 .menuList {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  background-color: #333;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 6px 0;
-  margin: 0;
-  list-style: none;
-  min-width: 180px;
-  z-index: 1000;
+    display: block; /* Теперь он всегда display: block, а его рендер контролирует React */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #333;
+    list-style: none;
+    padding: 0.5rem 0;
+    margin: 0.5rem 0 0;
+    border-radius: 4px;
+    z-index: 10;
+    min-width: 150px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .menuItem {
-  margin: 0;
+    padding: 0; /* Убираем внутренний отступ, чтобы ссылка занимала все пространство */
 }
 
 .menuLink {
-  display: block;
-  padding: 8px 16px;
-  color: #f0f0f0;
-  text-decoration: none;
-  font-size: 15px;
-  transition: background-color 0.2s ease;
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 0.5rem 1rem; /* Добавляем отступы сюда */
 }
 
 .menuLink:hover {
-  background-color: #f0f0f0;
-  color: #333;
+    background-color: #555;
+    color: #fff;
 }
