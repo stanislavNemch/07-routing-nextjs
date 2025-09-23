@@ -5,8 +5,14 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchNoteById } from "@/lib/api";
 import css from "./NotePreview.module.css";
 
-const NotePreview = ({ noteId }: { noteId: string }) => {
+type Props = {
+    noteId: string;
+    onClose?: () => void;
+};
+
+const NotePreview = ({ noteId, onClose }: Props) => {
     const router = useRouter();
+    const handleClose = onClose ?? (() => router.back());
 
     const {
         data: note,
@@ -18,11 +24,14 @@ const NotePreview = ({ noteId }: { noteId: string }) => {
         queryFn: () => fetchNoteById(noteId),
     });
 
-    if (isLoading) return <div className={css.container}>Loading note...</div>;
-    if (isError)
+    if (isLoading) {
+        return <div className={css.container}>Loading note...</div>;
+    }
+
+    if (isError) {
         return (
             <div className={css.container}>
-                <button onClick={() => router.back()} className={css.backBtn}>
+                <button onClick={handleClose} className={css.backBtn}>
                     &larr; Back
                 </button>
                 <div className={css.item}>
@@ -33,12 +42,13 @@ const NotePreview = ({ noteId }: { noteId: string }) => {
                 </div>
             </div>
         );
+    }
 
     if (!note) return null;
 
     return (
         <div className={css.container}>
-            <button onClick={() => router.back()} className={css.backBtn}>
+            <button onClick={handleClose} className={css.backBtn}>
                 &larr; Back
             </button>
             <div className={css.item}>
