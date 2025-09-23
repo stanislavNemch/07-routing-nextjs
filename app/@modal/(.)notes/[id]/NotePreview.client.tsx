@@ -1,11 +1,40 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { fetchNoteById } from "@/lib/api";
 import css from "./NotePreview.module.css";
-import type { Note } from "@/types/note";
 
-const NotePreview = ({ note }: { note: Note }) => {
+const NotePreview = ({ noteId }: { noteId: string }) => {
     const router = useRouter();
+
+    const {
+        data: note,
+        isLoading,
+        isError,
+        error,
+    } = useQuery({
+        queryKey: ["note", noteId],
+        queryFn: () => fetchNoteById(noteId),
+    });
+
+    if (isLoading) return <div className={css.container}>Loading note...</div>;
+    if (isError)
+        return (
+            <div className={css.container}>
+                <button onClick={() => router.back()} className={css.backBtn}>
+                    &larr; Back
+                </button>
+                <div className={css.item}>
+                    <p className={css.content}>
+                        Failed to load note
+                        {error instanceof Error ? `: ${error.message}` : ""}
+                    </p>
+                </div>
+            </div>
+        );
+
+    if (!note) return null;
 
     return (
         <div className={css.container}>

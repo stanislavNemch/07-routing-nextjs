@@ -1,7 +1,11 @@
 import Modal from "@/components/Modal/Modal";
 import NotePreview from "@/app/@modal/(.)notes/[id]/NotePreview.client";
 import { fetchNoteById } from "@/lib/api";
-import { Suspense } from "react";
+import {
+    HydrationBoundary,
+    QueryClient,
+    dehydrate,
+} from "@tanstack/react-query";
 
 // Типизируем `params` как Promise
 interface NoteModalProps {
@@ -9,15 +13,20 @@ interface NoteModalProps {
 }
 
 export default async function NoteModal({ params }: NoteModalProps) {
-    // Явно ожидаем (await) на Promise, чтобы получить id
     const { id } = await params;
-    const note = await fetchNoteById(id);
+
+    const queryClient = new QueryClient();
+
+    await queryClient.prefetchQuery({
+        queryKey: ["note", id],
+        queryFn: () => fetchNoteById(id),
+    });
 
     return (
-        <Suspense fallback={<div>Loading note...</div>}>
+        <HydrationBoundary state={dehydrate(queryClient)}>
             <Modal>
-                <NotePreview note={note} />
+                <NotePreview noteId={id} />
             </Modal>
-        </Suspense>
+        </HydrationBoundary>
     );
 }
