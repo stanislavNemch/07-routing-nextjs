@@ -22,6 +22,7 @@ const NotePreview = ({ noteId, onClose }: Props) => {
     } = useQuery({
         queryKey: ["note", noteId],
         queryFn: () => fetchNoteById(noteId),
+        refetchOnMount: false,
     });
 
     if (isLoading) {
